@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1068264413537",
+    "project_id": "dbpractice-60955",
+    "storage_bucket": "dbpractice-60955.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068264413537:android:fc81800d44bef3535e0d20",
+        "android_client_info": {
+          "package_name": "com.example.dbpractice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCn8gCd7hylo4pi0FwnaITLyHyFx-zphPA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
