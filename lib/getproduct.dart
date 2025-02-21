@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dbpractice/searchproduct.dart';
+import 'package:dbpractice/signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyProducts extends StatefulWidget {
   const MyProducts({super.key});
@@ -147,6 +150,16 @@ TextEditingController searchController= TextEditingController();
             child: Icon(Icons.add),
             onTap: () {
               Navigator.pushNamed(context, '/add');
+            },),
+          GestureDetector(
+            child: Icon(Icons.logout),
+            onTap: () async{
+                await FirebaseAuth.instance.signOut();
+                   final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    await prefs.remove('email');
+    print("user logged out");
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Signin()));
             },
           ),
         ],

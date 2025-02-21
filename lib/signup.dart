@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // signup page
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -87,6 +88,80 @@ class _SignupState extends State<Signup> {
 
 // Login page
 
+// class Signin extends StatefulWidget {
+//   const Signin({super.key});
+
+//   @override
+//   State<Signin> createState() => _SigninState();
+// }
+
+// class _SigninState extends State<Signin> {
+//     var emailController= TextEditingController();
+//   var passController= TextEditingController();
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("Login"),
+//       ),
+//       body: Center(
+//         child: ListView(
+//           children: [
+//             Padding(
+//               padding: const EdgeInsets.all(8.0),
+//               child: TextField(
+//                 controller: emailController,
+//                 decoration: InputDecoration(
+//                   labelText: "Email",
+//                   border: OutlineInputBorder(),
+//                 ),
+//               ),
+//             ),
+//             Padding(
+//               padding: const EdgeInsets.all(8.0),
+//               child: TextField(
+//                     controller: passController,
+//                     keyboardType: TextInputType.visiblePassword,
+//                 decoration: InputDecoration(
+//                   labelText: "Password",
+//                   border: OutlineInputBorder(),
+//                 ),
+//               ),
+//             ),
+           
+//             Padding(
+//               padding: const EdgeInsets.all(8.0),
+//               child: ElevatedButton(
+//                 onPressed: () async{
+//                 try {
+//   final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+//     email: emailController.text,
+//     password: passController.text
+//   );
+
+//   print("User logged in.");
+//   Navigator.pushNamed(context, "/products");
+// } on FirebaseAuthException catch (e) {
+//   if (e.code == 'user-not-found') {
+//     print('No user found for that email.');
+//   } else if (e.code == 'wrong-password') {
+//     print('Wrong password provided for that user.');
+//   }
+// }
+//                 },
+//                 child: Text("Login"),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
 class Signin extends StatefulWidget {
   const Signin({super.key});
 
@@ -95,8 +170,23 @@ class Signin extends StatefulWidget {
 }
 
 class _SigninState extends State<Signin> {
-    var emailController= TextEditingController();
-  var passController= TextEditingController();
+  var emailController = TextEditingController();
+  var passController = TextEditingController();
+
+  Future<void> _saveLoginState(String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+    await prefs.setString('email', email);
+    print("user set");
+  }
+
+  Future<void> _clearLoginState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    await prefs.remove('email');
+    print("user unset");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,34 +209,36 @@ class _SigninState extends State<Signin> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                    controller: passController,
-                    keyboardType: TextInputType.visiblePassword,
+                controller: passController,
+                keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecoration(
                   labelText: "Password",
                   border: OutlineInputBorder(),
                 ),
               ),
             ),
-           
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
-                onPressed: () async{
-                try {
-  final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-    email: emailController.text,
-    password: passController.text
-  );
+                onPressed: () async {
+                  try {
+                    final credential =
+                        await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: emailController.text,
+                      password: passController.text,
+                    );
 
-  print("User logged in.");
-  Navigator.pushNamed(context, "/products");
-} on FirebaseAuthException catch (e) {
-  if (e.code == 'user-not-found') {
-    print('No user found for that email.');
-  } else if (e.code == 'wrong-password') {
-    print('Wrong password provided for that user.');
-  }
-}
+                    print("User logged in.");
+                    await _saveLoginState(emailController.text);
+                    Navigator.pushNamed(context, "/");
+                  } on FirebaseAuthException catch (e) {
+                    await _clearLoginState(); // Clear login state if failed
+                    if (e.code == 'user-not-found') {
+                      print('No user found for that email.');
+                    } else if (e.code == 'wrong-password') {
+                      print('Wrong password provided for that user.');
+                    }
+                  }
                 },
                 child: Text("Login"),
               ),
